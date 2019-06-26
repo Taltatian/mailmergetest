@@ -1,0 +1,49 @@
+function mailMerge() {
+  const docMTemplateID = ""; //Google Doc template ID
+  const docFProductID = ""; //Google Doc final product ID
+  const gsheetID = ""; //Google Sheet ID
+  
+  var docMTemplate = DocumentApp.openById(docMTemplateID);
+  var docFProduct = DocumentApp.openById(docFProductID);
+  var gsheet = SpreadsheetApp.openById(gsheetID).getSheetByName("Data");
+  
+  var data = gsheet.getRange(2, 1, gsheet.getLastRow()-1,5).getValues();
+  
+  var templateParagraph = docMTemplate.getBody().getParagraphs();
+  
+  docFProduct.getBody().clear();
+  
+  data.forEach(function(r){
+     createMailMerge(r[0], r[1], r[3], r[4], docFProduct, templateParagraph);
+ });
+  
+function createMailMerge(first, last, team, number, docFProduct, templateParagraph){
+
+  templateParagraph.forEach(function(p) {
+    var theType = p.getType();
+    if(theType == "PARAGRAPH"){
+    docFProduct.getBody().appendParagraph(
+      p
+     .copy()
+     .replaceText("{first}", first)
+     .replaceText("{last}", last)
+     .replaceText("{team}", team)
+     .replaceText("{number}", number)
+);
+  }
+    else if(theType == "LIST_ITEM"){
+    docFProduct.getBody().appendListItem(
+      p
+     .copy()
+     .replaceText("{first}", first)
+     .replaceText("{last}", last)
+     .replaceText("{team}", team)
+     .replaceText("{number}", number)
+).setGlyphType(DocumentApp.GlyphType.BULLET);  
+    }
+  
+  })
+  
+  docFProduct.getBody().appendPageBreak();
+  
+}
