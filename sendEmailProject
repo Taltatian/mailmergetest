@@ -1,0 +1,26 @@
+function sendEmail(docFProduct) {
+  
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data").activate();
+  
+var ss = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+var lr = ss.getLastRow();
+var finalProductID = docFProduct;
+
+  var finalProduct = ScriptApp.openById(finalProductID);
+ 
+//  var templateText = finalProduct.getValue();
+ var templateText = DocumentApp.openById().getDocumentByName("FinalProduct").getBody();
+  
+  for (var i = 2; i <= lr; i++){
+  
+    var cEmail = ss.getRange(i, 3).getValue();
+    var cTeamInterest = ss.getRange(i, 4).getValue();
+    var cName = ss.getRange(i, 1).getValue();
+ 
+    var mBody = templateText.getBody();
+    var sLine = "Thank you for your interest in " + cTeamInterest + "!";
+    
+    MailApp.sendEmail(cEmail, sLine, mBody);
+  
+  }
+}};
